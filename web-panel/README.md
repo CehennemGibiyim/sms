@@ -75,3 +75,51 @@ VITE_BASE=/sms/ VITE_API_BASE=https://api.ornek.com bun run build
 `VITE_API_BASE` boşsa panel aynı origin'i (`/api`) kullanır. Backend'i
 Cloudflare Workers / Render / VPS üzerinde yayınlayıp bu değişkeni workflow'a
 ekleyerek Pages panelini canlı proxy'ye bağlayabilirsiniz.
+
+## Sağlayıcı ekleme (ServiceDefinition)
+
+Kodla sağlayıcı eklemek için `src/services/providers.ts` içindeki
+`serviceRegistry` dizisine tanım ekleyin:
+
+```ts
+import type { ServiceDefinition } from './definition'
+
+export const serviceRegistry: ServiceDefinition[] = [
+  {
+    id: 'firma-sms',
+    name: 'FirmaSms',
+    method: 'POST',
+    url: ({ phone }) => 'https://api.firmaniz.com/v1/messages',
+    headers: () => ({
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer {{env:PROVIDER_FIRMA_KEY}}',
+    }),
+    body: ({ phone }) => JSON.stringify({ to: `+90${phone}`, template: 'welcome' }),
+    check: (status, text) => status === 200 && text.includes('"ok":true'),
+    requiredEnv: ['PROVIDER_FIRMA_KEY'],
+  },
+]
+```
+
+Panel bu tanımı otomatik listeler, `kod` etiketiyle gösterir. Çalıştırınca
+`check(status, body)` sonucuna göre yeşil **başarılı** veya kırmızı
+**başarısız** logu üretilir.
+
+### API anahtarları (backend ortam değişkeni)
+
+Anahtarlar tarayıcıya gitmez. Header/gövde/URL içinde `{{env:DEGISKEN}}`
+yazılır, backend bunu `process.env` üzerinden çözer.
+
+`.env` (yerel, git'e eklenmez):
+
+```bash
+PROVIDER_FIRMA_KEY=gercek-anahtar
+ALLOWED_HOSTS=api.firmaniz.com
+```
+
+Güvenlik: `{{env:...}}` kullanan isteklerde hedef host **mutlaka**
+`ALLOWED_HOSTS` içinde olmalıdır; aksi halde backend isteği reddeder. Bu,
+anahtarların başka bir adrese sızdırılmasını engeller.
+
+`bun run dev:server` `.env` dosyasını otomatik okur. Derlenmiş sunucuda
+(`node server-dist/server.cjs`) değişkenleri ortamdan verin.

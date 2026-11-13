@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import servicesData from './data/services.json'
 import type { ServiceInfo, ServiceStatus, LogEntry, CustomService, ProxyResult } from './types'
+import type { ServiceDefinition } from './services/definition'
+import { buildCtx, toRequest } from './services/definition'
+import { serviceRegistry } from './services/providers'
 
 const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) || '').replace(/\/$/, '')
 
 const builtin = servicesData as Record<string, ServiceInfo>
 const builtinNames = Object.keys(builtin)
 
-type MergedService = ServiceInfo & { name: string; custom: boolean }
+type MergedService = ServiceInfo & { name: string; custom: boolean; registry?: boolean; definition?: ServiceDefinition }
 
 const emptyForm = {
   name: '',
@@ -36,7 +39,7 @@ function fillTemplate(text: string, phone: string, mail: string) {
 export default function App() {
   const [custom, setCustom] = useState<CustomService[]>([])
   const [serverOnline, setServerOnline] = useState<boolean | null>(null)
-  const [selected, setSelected] = useState<Set<string>>(new Set(builtinNames))
+  const [selected, setSelected] = useState<Set<string>>(new Set([...builtinNames, ...serviceRegistry.map((d) => d.name)]))
   const [search, setSearch] = useState('')
   const [phone, setPhone] = useState('')
   const [mail, setMail] = useState('')
@@ -80,6 +83,19 @@ export default function App() {
     for (const c of custom) {
       map[c.name] = { url: c.url, method: c.method, domain: domainOf(c.url), headers: c.headers, body: c.body, name: c.name, custom: true }
     }
+    for (const def of serviceRegistry) {
+      if (map[def.name]) continue
+      const preview = def.url(buildCtx('0000000000', ''))
+      map[def.name] = {
+        name: def.name,
+        url: preview,
+        method: def.method,
+        domain: domainOf(preview),
+        custom: false,
+        registry: true,
+        definition: def,
+      }
+    }
     return map
   }, [custom])
 
@@ -113,6 +129,9 @@ export default function App() {
   }
 
   const buildRequest = (svc: MergedService, phoneVal: string) => {
+    if (svc.definition) {
+      return toRequest(svc.definition, buildCtx(phoneVal, mail))
+    }
     const url = fillTemplate(svc.url, phoneVal, mail)
     let headers = svc.headers || {}
     let body: string | undefined
@@ -149,7 +168,15 @@ export default function App() {
         updateLog(id, 'fail', 'Backend yok (statik yayın). Yerelde dev:server gerekli.')
         return
       }
-      if (data.ok) {
+      let ok = data.ok
+      if (svc.definition?.check) {
+        try {
+          ok = data.status !== 0 && svc.definition.check(data.status, data.body)
+        } catch {
+          ok = false
+        }
+      }
+      if (ok) {
         updateLog(id, 'success', `${data.status} OK${data.body ? ' · ' + data.body.slice(0, 60).replace(/\s+/g, ' ') : ''}`)
       } else {
         updateLog(id, 'fail', data.error || `${data.status} hata`)
@@ -437,6 +464,7 @@ export default function App() {
                     <div className="meta">
                       <div className="name">
                         {name} {s.custom && <span className="badge">özel</span>}
+                        {s.registry && <span className="badge">kod</span>}
                       </div>
                       <div className="domain">{s.domain}</div>
                     </div>

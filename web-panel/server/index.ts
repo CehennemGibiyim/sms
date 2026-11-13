@@ -79,6 +79,62 @@ function clampText(text: string, max = 4000) {
   return text.length > max ? text.slice(0, max) + '…' : text
 }
 
+const ENV_PLACEHOLDER = /\{\{env:([A-Z0-9_]+)\}\}/g
+const HAS_ENV_PLACEHOLDER = /\{\{env:[A-Z0-9_]+\}\}/
+
+function hostOf(value: string): string {
+  try { return new URL(value).hostname } catch { return '' }
+}
+
+function allowedHosts(): string[] {
+  return (process.env.ALLOWED_HOSTS || '')
+    .split(',')
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean)
+}
+
+/**
+ * {{env:VAR}} yer tutucularını backend ortam değişkenlerinden çözer.
+ * API anahtarları tarayıcıya hiç gitmez. Kötüye kullanımı önlemek için
+ * env kullanılan isteklerde hedef host ALLOWED_HOSTS içinde olmalıdır.
+ */
+function resolveSecrets(payload: any) {
+  const rawUrl = String(payload?.url || '')
+  const method = String(payload?.method || 'POST').toUpperCase() === 'GET' ? 'GET' : 'POST'
+  const rawHeaders: Record<string, unknown> =
+    payload?.headers && typeof payload.headers === 'object' ? payload.headers : {}
+  const rawBody = typeof payload?.body === 'string' ? payload.body : undefined
+
+  const usesEnv = HAS_ENV_PLACEHOLDER.test(
+    JSON.stringify([rawUrl, rawHeaders, rawBody ?? '']),
+  )
+
+  const resolve = (input: string) =>
+    input.replace(ENV_PLACEHOLDER, (_, key: string) => {
+      const value = process.env[key]
+      if (!value) throw new Error(`eksik ortam değişkeni: ${key}`)
+      return value
+    })
+
+  const url = resolve(rawUrl)
+  const headers = Object.fromEntries(
+    Object.entries(rawHeaders).map(([k, v]) => [k, resolve(String(v))]),
+  )
+  const body = rawBody !== undefined ? resolve(rawBody) : undefined
+
+  if (usesEnv) {
+    const host = hostOf(url).toLowerCase()
+    const allow = allowedHosts()
+    if (!host || allow.length === 0 || !allow.includes(host)) {
+      throw new Error(
+        `env kullanımı için ALLOWED_HOSTS tanımlı olmalı (hedef: ${host || 'geçersiz'})`,
+      )
+    }
+  }
+
+  return { url, method, headers, body }
+}
+
 async function proxy(req: http.IncomingMessage, res: http.ServerResponse) {
   let payload: any
   try {
@@ -87,7 +143,13 @@ async function proxy(req: http.IncomingMessage, res: http.ServerResponse) {
     return sendJson(res, 400, { ok: false, status: 0, body: '', error: e.message })
   }
 
-  const { url, method = 'POST', headers = {}, body } = payload || {}
+  let resolved: ReturnType<typeof resolveSecrets>
+  try {
+    resolved = resolveSecrets(payload)
+  } catch (e: any) {
+    return sendJson(res, 400, { ok: false, status: 0, body: '', error: e.message })
+  }
+  const { url, method, headers, body } = resolved
   if (typeof url !== 'string' || !/^https?:\/\//i.test(url)) {
     return sendJson(res, 400, { ok: false, status: 0, body: '', error: 'geçersiz url' })
   }
