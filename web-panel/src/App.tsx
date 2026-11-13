@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import servicesData from './data/services.json'
 import type { ServiceInfo, ServiceStatus, LogEntry, CustomService, ProxyResult } from './types'
 
+const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) || '').replace(/\/$/, '')
+
 const builtin = servicesData as Record<string, ServiceInfo>
 const builtinNames = Object.keys(builtin)
 
@@ -55,11 +57,11 @@ export default function App() {
   // Load custom services + health
   useEffect(() => {
     let alive = true
-    fetch('/api/health')
+    fetch(`${API_BASE}/api/health`)
       .then((r) => r.json())
       .then(() => alive && setServerOnline(true))
       .catch(() => alive && setServerOnline(false))
-    fetch('/api/services')
+    fetch(`${API_BASE}/api/services`)
       .then((r) => r.json())
       .then((d) => alive && setCustom(Array.isArray(d.services) ? d.services : []))
       .catch(() => {})
@@ -130,7 +132,7 @@ export default function App() {
       ...prev,
     ].slice(0, 500))
     try {
-      const res = await fetch('/api/proxy', {
+      const res = await fetch(`${API_BASE}/api/proxy`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(req),
@@ -223,7 +225,7 @@ export default function App() {
     }
     setSaving(true)
     try {
-      const res = await fetch('/api/services', {
+      const res = await fetch(`${API_BASE}/api/services`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, url, method: form.method, headers, body: form.body }),
@@ -247,7 +249,7 @@ export default function App() {
     if (!svc) return
     if (!confirm(`"${name}" servisini silmek istiyor musunuz?`)) return
     try {
-      const res = await fetch(`/api/services/${encodeURIComponent(svc.id)}`, { method: 'DELETE' })
+      const res = await fetch(`${API_BASE}/api/services/${encodeURIComponent(svc.id)}`, { method: 'DELETE' })
       const data = await res.json()
       if (res.ok) {
         setCustom(Array.isArray(data.services) ? data.services : [])

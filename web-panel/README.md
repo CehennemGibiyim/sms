@@ -52,3 +52,26 @@ doldurulur. Eklenen servis listede `özel` etiketiyle görünür ve silinebilir.
 Servis çağrıları artık tarayıcıdan değil backend'den yapıldığı için CORS engeli
 yoktur. Başarısız sonuçlar hedef servisin kendi yanıtından (durum kodu, zaman
 aşımı vb.) kaynaklanır.
+
+## GitHub Pages (statik panel)
+
+`https://cehennemgibiyim.github.io/sms/` adresi GitHub Actions ile otomatik
+yayınlanır (`.github/workflows/deploy-pages.yml`). Ayarlar:
+
+- **Settings → Pages → Build and deployment → Source: GitHub Actions**
+- `main` dalına `web-panel/` değişikliği push edildiğinde workflow derler ve yayınlar.
+- Derleme `VITE_BASE=/sms/` ile yapılır, böylece varlıklar `/sms/assets/...` altından yüklenir.
+
+### Önemli: proxy GitHub Pages'te çalışmaz
+
+GitHub Pages yalnızca statik dosya sunar; `/api/proxy` backend'i orada yoktur.
+Bu yüzden Pages'te arayüz açılır ama "proxy çevrimdışı" görünür ve işlemler
+çalışmaz. Tam işlev için bir backend gerekir. Uzak bir backend'e bağlanmak için:
+
+```bash
+VITE_BASE=/sms/ VITE_API_BASE=https://api.ornek.com bun run build
+```
+
+`VITE_API_BASE` boşsa panel aynı origin'i (`/api`) kullanır. Backend'i
+Cloudflare Workers / Render / VPS üzerinde yayınlayıp bu değişkeni workflow'a
+ekleyerek Pages panelini canlı proxy'ye bağlayabilirsiniz.
