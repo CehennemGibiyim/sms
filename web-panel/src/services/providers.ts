@@ -45,4 +45,20 @@ import type { ServiceDefinition } from './definition'
 //   requiredEnv: ['PROVIDER_FIRMA_KEY'],
 // },
 
-export const serviceRegistry: ServiceDefinition[] = []
+export const serviceRegistry: ServiceDefinition[] = [
+  // Uçtan uca test için nötr bir echo servisi (SMS göndermez).
+  // Backend'de ALLOWED_HOSTS=httpbin.org ve PROVIDER_DEMO_KEY tanımlı olmalı.
+  {
+    id: 'ornek-echo',
+    name: 'OrnekEcho',
+    method: 'POST',
+    url: () => 'https://httpbin.org/post',
+    headers: () => ({
+      'Content-Type': 'application/json',
+      'X-Demo-Key': '{{env:PROVIDER_DEMO_KEY}}',
+    }),
+    body: ({ phone, mail }) => JSON.stringify({ phone, mail, source: 'enough-panel' }),
+    check: (status, text) => status === 200 && text.includes('"phone"'),
+    requiredEnv: ['PROVIDER_DEMO_KEY'],
+  },
+]
