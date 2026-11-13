@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# build output
+web-panel/dist/
+web-panel/server-dist/
+desktop/release/
+desktop/build/
+
+# runtime data
+web-panel/data/
+
+# logs & OS junk
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# typescript build info
+*.tsbuildinfo

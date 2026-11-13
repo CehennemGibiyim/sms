@@ -1,0 +1,417 @@
+{
+  "KahveDunyasi": {
+    "url": "https://core.kahvedunyasi.com:443/api/users/sms/send",
+    "method": "POST",
+    "domain": "core.kahvedunyasi.com"
+  },
+  "Wmf": {
+    "url": "https://www.wmf.com.tr/users/register/",
+    "method": "POST",
+    "domain": "www.wmf.com.tr"
+  },
+  "Bim": {
+    "url": "https://bim.veesk.net:443/service/v1.0/account/login",
+    "method": "POST",
+    "domain": "bim.veesk.net"
+  },
+  "Englishhome": {
+    "url": "https://www.englishhome.com:443/api/member/sendOtp",
+    "method": "POST",
+    "domain": "www.englishhome.com"
+  },
+  "Icq": {
+    "url": "https://u.icq.net:443/api/v90/smsreg/requestPhoneValidation.php?client=icq&f=json&k=gu19PNBblQjCdbMU&locale=en&msisdn=%2B90{self.phone}&platform=ios&r=796356153&smsFormatType=human",
+    "method": "POST",
+    "domain": "u.icq.net"
+  },
+  "Suiste": {
+    "url": "https://suiste.com:443/api/auth/code",
+    "method": "POST",
+    "domain": "suiste.com"
+  },
+  "KimGb": {
+    "url": "https://3uptzlakwi.execute-api.eu-west-1.amazonaws.com:443/api/auth/send-otp",
+    "method": "POST",
+    "domain": "3uptzlakwi.execute-api.eu-west-1.amazonaws.com"
+  },
+  "Tazi": {
+    "url": "https://mobileapiv2.tazi.tech:443/C08467681C6844CFA6DA240D51C8AA8C/uyev2/smslogin",
+    "method": "POST",
+    "domain": "mobileapiv2.tazi.tech"
+  },
+  "Evidea": {
+    "url": "https://www.evidea.com:443/users/register/",
+    "method": "POST",
+    "domain": "www.evidea.com"
+  },
+  "Hey": {
+    "url": "https://heyapi.heymobility.tech:443/V14//api/User/ActivationCodeRequest?organizationId=9DCA312E-18C8-4DAE-AE65-01FEAD558739&phonenumber={self.phone}&requestid=18bca4e4-2f45-41b0-b054-3efd5b2c9c57-20230730&territoryId=738211d4-fd9d-4168-81a6-b7dbf91170e9",
+    "method": "POST",
+    "domain": "heyapi.heymobility.tech"
+  },
+  "Bisu": {
+    "url": "https://www.bisu.com.tr:443/api/v2/app/authentication/phone/register",
+    "method": "POST",
+    "domain": "www.bisu.com.tr"
+  },
+  "Ucdortbes": {
+    "url": "https://api.345dijital.com:443/api/users/register",
+    "method": "POST",
+    "domain": "api.345dijital.com"
+  },
+  "Macro": {
+    "url": "https://www.macrocenter.com.tr:443/rest/users/register/otp?reid=31",
+    "method": "POST",
+    "domain": "www.macrocenter.com.tr"
+  },
+  "TiklaGelsin": {
+    "url": "https://svc.apps.tiklagelsin.com:443/user/graphql",
+    "method": "POST",
+    "domain": "svc.apps.tiklagelsin.com"
+  },
+  "Ayyildiz": {
+    "url": "https://api.altinyildizclassics.com:443/mobileapi2/autapi/CreateSmsOtpForRegister?gsm={self.phone}",
+    "method": "POST",
+    "domain": "api.altinyildizclassics.com"
+  },
+  "Naosstars": {
+    "url": "https://api.naosstars.com:443/api/smsSend/9c9fa861-cc5d-43b0-b4ea-1b541be15350",
+    "method": "POST",
+    "domain": "api.naosstars.com"
+  },
+  "Istegelsin": {
+    "url": "https://prod.fasapi.net:443/",
+    "method": "POST",
+    "domain": "prod.fasapi.net"
+  },
+  "Koton": {
+    "url": "https://www.koton.com:443/users/register/",
+    "method": "POST",
+    "domain": "www.koton.com"
+  },
+  "Hayatsu": {
+    "url": "https://api.hayatsu.com.tr:443/api/SignUp/SendOtp",
+    "method": "POST",
+    "domain": "api.hayatsu.com.tr"
+  },
+  "Hizliecza": {
+    "url": "https://hizlieczaprodapi.hizliecza.net:443/mobil/account/sendOTP",
+    "method": "POST",
+    "domain": "hizlieczaprodapi.hizliecza.net"
+  },
+  "Ipragaz": {
+    "url": "https://ipapp.ipragaz.com.tr:443/ipragazmobile/v2/ipragaz-b2c/ipragaz-customer/mobile-register-otp",
+    "method": "POST",
+    "domain": "ipapp.ipragaz.com.tr"
+  },
+  "Metro": {
+    "url": "https://feature.metro-tr.com:443/api/mobileAuth/validateSmsSend",
+    "method": "POST",
+    "domain": "feature.metro-tr.com"
+  },
+  "Qumpara": {
+    "url": "https://tr-api.fisicek.com:443/v1.3/auth/getOTP",
+    "method": "POST",
+    "domain": "tr-api.fisicek.com"
+  },
+  "Paybol": {
+    "url": "https://pyb-mobileapi.walletgate.io:443/v1/Account/RegisterPersonalAccountSendOtpSms",
+    "method": "POST",
+    "domain": "pyb-mobileapi.walletgate.io"
+  },
+  "Migros": {
+    "url": "https://rest.migros.com.tr:443/sanalmarket/users/register/otp",
+    "method": "POST",
+    "domain": "rest.migros.com.tr"
+  },
+  "File": {
+    "url": "https://api.filemarket.com.tr:443/v1/otp/send",
+    "method": "POST",
+    "domain": "api.filemarket.com.tr"
+  },
+  "Joker": {
+    "url": "https://api.joker.com.tr:443/api/register",
+    "method": "POST",
+    "domain": "api.joker.com.tr"
+  },
+  "Akasya": {
+    "url": "https://akasya-admin.poilabs.com:443/v1/tr/sms",
+    "method": "POST",
+    "domain": "akasya-admin.poilabs.com"
+  },
+  "Akbati": {
+    "url": "https://akbati-admin.poilabs.com:443/v1/tr/sms",
+    "method": "POST",
+    "domain": "akbati-admin.poilabs.com"
+  },
+  "Clickme": {
+    "url": "https://mobile-gateway.clickmelive.com:443/api/v2/authorization/code",
+    "method": "POST",
+    "domain": "mobile-gateway.clickmelive.com"
+  },
+  "Happy": {
+    "url": "https://www.happy.com.tr:443/index.php?route=account/register/verifyPhone",
+    "method": "POST",
+    "domain": "www.happy.com.tr"
+  },
+  "Komagene": {
+    "url": "https://gateway.komagene.com.tr/auth/auth/smskodugonder",
+    "method": "POST",
+    "domain": "gateway.komagene.com.tr"
+  },
+  "KuryemGelsin": {
+    "url": "https://api.kuryemgelsin.com:443/tr/api/users/registerMessage/",
+    "method": "POST",
+    "domain": "api.kuryemgelsin.com"
+  },
+  "Porty": {
+    "url": "https://panel.porty.tech:443/api.php?",
+    "method": "POST",
+    "domain": "panel.porty.tech"
+  },
+  "Taksim": {
+    "url": "https://service.taksim.digital:443/services/PassengerRegister/Register",
+    "method": "POST",
+    "domain": "service.taksim.digital"
+  },
+  "Tasdelen": {
+    "url": "http://94.102.66.162:80/MobilServis/api/MobilOperation/CustomerPhoneSmsSend",
+    "method": "POST",
+    "domain": "94.102.66.162"
+  },
+  "Tasimacim": {
+    "url": "https://server.tasimacim.com/requestcode",
+    "method": "POST",
+    "domain": "server.tasimacim.com"
+  },
+  "ToptanTeslim": {
+    "url": "https://toptanteslim.com:443/Services/V2/MobilServis.aspx",
+    "method": "POST",
+    "domain": "toptanteslim.com"
+  },
+  "Uysal": {
+    "url": "https://api.uysalmarket.com.tr:443/api/mobile-users/send-register-sms",
+    "method": "POST",
+    "domain": "api.uysalmarket.com.tr"
+  },
+  "Yapp": {
+    "url": "https://yapp.com.tr:443/api/mobile/v1/register",
+    "method": "POST",
+    "domain": "yapp.com.tr"
+  },
+  "YilmazTicaret": {
+    "url": "http://www.yilmazticaret.net:80/restapi2/register/",
+    "method": "POST",
+    "domain": "www.yilmazticaret.net"
+  },
+  "Yuffi": {
+    "url": "https://api.yuffi.co/api/parent/login/user",
+    "method": "POST",
+    "domain": "api.yuffi.co"
+  },
+  "Starbucks": {
+    "url": "https://auth.sbuxtr.com:443/signUp",
+    "method": "POST",
+    "domain": "auth.sbuxtr.com"
+  },
+  "Dominos": {
+    "url": "https://frontend.dominos.com.tr:443/api/customer/sendOtpCode",
+    "method": "POST",
+    "domain": "frontend.dominos.com.tr"
+  },
+  "Baydoner": {
+    "url": "https://crmmobil.baydoner.com:7004/Api/Customers/AddCustomerTemp",
+    "method": "POST",
+    "domain": "crmmobil.baydoner.com"
+  },
+  "Pidem": {
+    "url": "https://restashop.azurewebsites.net:443/graphql/",
+    "method": "POST",
+    "domain": "restashop.azurewebsites.net"
+  },
+  "Frink": {
+    "url": "https://api.frink.com.tr:443/api/auth/postSendOTP",
+    "method": "POST",
+    "domain": "api.frink.com.tr"
+  },
+  "a101": {
+    "url": "https://www.a101.com.tr/users/otp-login/",
+    "method": "POST",
+    "domain": "www.a101.com.tr"
+  },
+  "Bodrum": {
+    "url": "https://gandalf.orwi.app:443/api/user/requestOtp",
+    "method": "POST",
+    "domain": "gandalf.orwi.app"
+  },
+  "defacto": {
+    "url": "https://www.defacto.com.tr/Customer/SendPhoneConfirmationSms",
+    "method": "POST",
+    "domain": "www.defacto.com.tr"
+  },
+  "ikinciyeni": {
+    "url": "https://apigw.ikinciyeni.com/RegisterRequest",
+    "method": "POST",
+    "domain": "apigw.ikinciyeni.com"
+  },
+  "ceptesok": {
+    "url": "https://api.ceptesok.com/api/users/sendsms",
+    "method": "POST",
+    "domain": "api.ceptesok.com"
+  },
+  "pisir": {
+    "url": "https://api.pisir.com/v1/login/",
+    "method": "POST",
+    "domain": "api.pisir.com"
+  },
+  "coffy": {
+    "url": "https://prod-api-mobile.coffy.com.tr/Account/Account/SendVerificationCode",
+    "method": "POST",
+    "domain": "prod-api-mobile.coffy.com.tr"
+  },
+  "sushico": {
+    "url": "https://api.sushico.com.tr/tr/sendActivation",
+    "method": "POST",
+    "domain": "api.sushico.com.tr"
+  },
+  "kalmasin": {
+    "url": "https://api.kalmasin.com.tr/user/login",
+    "method": "POST",
+    "domain": "api.kalmasin.com.tr"
+  },
+  "yotto": {
+    "url": "https://42577.smartomato.ru/account/session.json",
+    "method": "POST",
+    "domain": "42577.smartomato.ru"
+  },
+  "aygaz": {
+    "url": "https://ecommerce-memberapi.aygaz.com.tr/api/Membership/SendVerificationCode",
+    "method": "POST",
+    "domain": "ecommerce-memberapi.aygaz.com.tr"
+  },
+  "pawapp": {
+    "url": "https://api.pawder.app/api/authentication/sign-up",
+    "method": "POST",
+    "domain": "api.pawder.app"
+  },
+  "mopas": {
+    "url": "https://api.mopas.com.tr//authorizationserver/oauth/token?client_id=mobile_mopas&client_secret=secret_mopas&grant_type=client_credentials",
+    "method": "POST",
+    "domain": "api.mopas.com.tr"
+  },
+  "ninewest": {
+    "url": "https://www.ninewest.com.tr/webservice/v1/register.json",
+    "method": "POST",
+    "domain": "www.ninewest.com.tr"
+  },
+  "saka": {
+    "url": "https://mobilcrm2.saka.com.tr/api/customer/login",
+    "method": "POST",
+    "domain": "mobilcrm2.saka.com.tr"
+  },
+  "superpedestrian": {
+    "url": "https://consumer-auth.linkyour.city/consumer_auth/register",
+    "method": "POST",
+    "domain": "consumer-auth.linkyour.city"
+  },
+  "gofody": {
+    "url": "https://backend.gofody.com/api/v1/enduser/register/",
+    "method": "POST",
+    "domain": "backend.gofody.com"
+  },
+  "weescooter": {
+    "url": "https://friendly-cerf.185-241-138-85.plesk.page/api/v1/members/gsmlogin",
+    "method": "POST",
+    "domain": "friendly-cerf.185-241-138-85.plesk.page"
+  },
+  "scooby": {
+    "url": "https://sct.scoobyturkiye.com/v1/mobile/user/code-request?phonenumber=90{self.phone}",
+    "method": "GET",
+    "domain": "sct.scoobyturkiye.com"
+  },
+  "gez": {
+    "url": "https://gezteknoloji.arabulucuyuz.net/api/Account/get-phone-number-confirmation-code-for-new-user?phonenumber=90{self}",
+    "method": "GET",
+    "domain": "gezteknoloji.arabulucuyuz.net"
+  },
+  "heyscooter": {
+    "url": "https://heyapi.heymobility.tech/V9//api/User/ActivationCodeRequest?organizationId=9DCA312E-18C8-4DAE-AE65-01FEAD558739&phonenumber={self.phone}",
+    "method": "POST",
+    "domain": "heyapi.heymobility.tech"
+  },
+  "jetle": {
+    "url": "http://ws.geowix.com/GeoCourier/SubmitPhoneToLogin?phonenumber={self.phone}&firmaID=1048",
+    "method": "GET",
+    "domain": "ws.geowix.com"
+  },
+  "rabbit": {
+    "url": "https://api.rbbt.com.tr/v1/auth/authenticate",
+    "method": "POST",
+    "domain": "api.rbbt.com.tr"
+  },
+  "roombadi": {
+    "url": "https://api.roombadi.com/api/v1/auth/otp/authenticate",
+    "method": "POST",
+    "domain": "api.roombadi.com"
+  },
+  "hizliecza": {
+    "url": "https://hizlieczaprodapi.hizliecza.net/mobil/account/sendOTP",
+    "method": "POST",
+    "domain": "hizlieczaprodapi.hizliecza.net"
+  },
+  "signalall": {
+    "url": "https://appservices.huzk.com/client/register",
+    "method": "POST",
+    "domain": "appservices.huzk.com"
+  },
+  "goyakit": {
+    "url": "https://gomobilapp.ipragaz.com.tr/api/v1/0/authentication/sms/send?phone={self.phone}&isRegistered=false",
+    "method": "GET",
+    "domain": "gomobilapp.ipragaz.com.tr"
+  },
+  "pinar": {
+    "url": "https://pinarsumobileservice.yasar.com.tr/pinarsu-mobil/api/Customer/SendOtp",
+    "method": "POST",
+    "domain": "pinarsumobileservice.yasar.com.tr"
+  },
+  "oliz": {
+    "url": "https://api.oliz.com.tr/api/otp/send",
+    "method": "POST",
+    "domain": "api.oliz.com.tr"
+  },
+  "marti": {
+    "url": "https://customer.martiscooter.com/v13/scooter/dispatch/customer/signin",
+    "method": "POST",
+    "domain": "customer.martiscooter.com"
+  },
+  "karma": {
+    "url": "https://api.gokarma.app/v1/auth/send-sms",
+    "method": "POST",
+    "domain": "api.gokarma.app"
+  },
+  "hop": {
+    "url": "https://api.hoplagit.com:443/v1/auth:reqSMS",
+    "method": "POST",
+    "domain": "api.hoplagit.com"
+  },
+  "anadolu": {
+    "url": "https://www.anadolu.com.tr/Iletisim_Formu_sms.php",
+    "method": "POST",
+    "domain": "www.anadolu.com.tr"
+  },
+  "total": {
+    "url": "https://mobileapi.totalistasyonlari.com.tr:443/SmartSms/SendSms?gsmNo={self.phone}",
+    "method": "POST",
+    "domain": "mobileapi.totalistasyonlari.com.tr"
+  },
+  "englishhome": {
+    "url": "https://www.englishhome.com:443/enh_app/users/registration/",
+    "method": "POST",
+    "domain": "www.englishhome.com"
+  },
+  "petrolofisi": {
+    "url": "https://mobilapi.petrolofisi.com.tr:443/api/auth/register",
+    "method": "POST",
+    "domain": "mobilapi.petrolofisi.com.tr"
+  }
+}
