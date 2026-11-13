@@ -58,8 +58,12 @@ export default function App() {
   useEffect(() => {
     let alive = true
     fetch(`${API_BASE}/api/health`)
-      .then((r) => r.json())
-      .then(() => alive && setServerOnline(true))
+      .then(async (r) => {
+        const ct = r.headers.get('content-type') || ''
+        if (!r.ok || !ct.includes('application/json')) return false
+        try { await r.json(); return true } catch { return false }
+      })
+      .then((ok) => alive && setServerOnline(ok))
       .catch(() => alive && setServerOnline(false))
     fetch(`${API_BASE}/api/services`)
       .then((r) => r.json())
@@ -137,7 +141,14 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(req),
       })
-      const data: ProxyResult = await res.json()
+      const text = await res.text()
+      let data: ProxyResult
+      try {
+        data = JSON.parse(text)
+      } catch {
+        updateLog(id, 'fail', 'Backend yok (statik yayın). Yerelde dev:server gerekli.')
+        return
+      }
       if (data.ok) {
         updateLog(id, 'success', `${data.status} OK${data.body ? ' · ' + data.body.slice(0, 60).replace(/\s+/g, ' ') : ''}`)
       } else {
@@ -149,6 +160,10 @@ export default function App() {
   }
 
   const startRun = async () => {
+    if (serverOnline === false) {
+      alert('Backend çevrimdışı. GitHub Pages statik yayındır; göndermek için yerelde "bun run dev:server" çalıştırın.')
+      return
+    }
     const phoneVal = phone.trim()
     if (!/^\d{10}$/.test(phoneVal)) {
       alert('Telefon numarası 10 haneli olmalı (başında +90 olmadan).')
@@ -370,8 +385,8 @@ export default function App() {
             </div>
 
             {!running ? (
-              <button className="btn btn-primary btn-block" onClick={startRun}>
-                ▶ İşlemi Başlat
+              <button className="btn btn-primary btn-block" onClick={startRun} disabled={serverOnline === false}>
+                {serverOnline === false ? '◼ Backend çevrimdışı' : '▶ İşlemi Başlat'}
               </button>
             ) : (
               <button className="btn btn-danger btn-block" onClick={stopRun}>
@@ -384,9 +399,9 @@ export default function App() {
             </div>
 
             <div className="cors-note">
-              Proxy aktif: istekler tarayıcı yerine yerel backend üzerinden gönderilir, böylece CORS engeli aşılır.
-              Sunucu kapalıysa panel doğrudan bağlanamaz; başlatmak için <b>bun run dev:server</b> çalıştırın.
-              Başarısız servisler hedefin kendi yanıtından kaynaklanır.
+              GitHub Pages yalnızca statik dosya sunar; proxy backend orada çalışmaz. Panel GitHub'da
+              katalog olarak açılır. Göndermek için yerelde <b>bun run dev:server</b> + <b>bun run dev</b>
+              çalıştırın; proxy aktifken istekler tarayıcı yerine backend üzerinden gider ve CORS engeli aşılır.
             </div>
           </aside>
 
