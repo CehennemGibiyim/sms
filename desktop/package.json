@@ -1,6 +1,6 @@
 {
   "name": "enough-v2-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Enough V2 SMS panel — cross-platform desktop uygulaması (Windows / macOS / Linux)",
   "main": "main.cjs",
