@@ -10,6 +10,7 @@ const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data')
 const DATA_FILE = path.join(DATA_DIR, 'custom-services.json')
 const DIST_DIR = process.env.DIST_DIR || path.join(ROOT, 'dist')
 const PORT = Number(process.env.PORT || 8787)
+const HOST = process.env.HOST || '0.0.0.0'
 
 type CustomService = {
   id: string
@@ -38,11 +39,39 @@ function saveData(list: CustomService[]) {
 
 let customServices: CustomService[] = ensureData()
 
+/**
+ * Only loopback origins may call the API from a browser. The panel itself is
+ * same-origin, so no CORS headers are needed there; this keeps the local proxy
+ * from being usable by any random website the user happens to visit.
+ */
+function loopbackOrigin(req: http.IncomingMessage): string | null {
+  const origin = req.headers.origin
+  if (!origin) return null
+  try {
+    const hostname = new URL(origin).hostname
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') return origin
+  } catch {
+    /* malformed origin */
+  }
+  return null
+}
+
+const allowedOrigins = new WeakMap<http.ServerResponse, string | null>()
+
+function corsHeaders(res: http.ServerResponse): Record<string, string> {
+  const origin = allowedOrigins.get(res)
+  if (!origin) return {}
+  return {
+    'Access-Control-Allow-Origin': origin,
+    Vary: 'Origin',
+  }
+}
+
 function sendJson(res: http.ServerResponse, status: number, data: unknown) {
   const body = JSON.stringify(data)
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
+    ...corsHeaders(res),
     'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Cache-Control': 'no-store',
@@ -219,9 +248,11 @@ export function startServer(port = PORT) {
     const url = new URL(req.url || '/', 'http://localhost')
     const pathname = url.pathname
 
+    allowedOrigins.set(res, loopbackOrigin(req))
+
     if (req.method === 'OPTIONS') {
       res.writeHead(204, {
-        'Access-Control-Allow-Origin': '*',
+        ...corsHeaders(res),
         'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       })
@@ -290,8 +321,8 @@ export function startServer(port = PORT) {
     return serveStatic(res, pathname)
   })
 
-  server.listen(port, '0.0.0.0', () => {
-    console.log(`[server] http://localhost:${port} üzerinde çalışıyor`)
+  server.listen(port, HOST, () => {
+    console.log(`[server] http://${HOST}:${port} üzerinde çalışıyor`)
   })
   return server
 }

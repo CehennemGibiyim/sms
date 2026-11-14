@@ -45,17 +45,35 @@ derlemesi (`dist`) ve proxy sunucusu (`server-dist`) uygulamanın içine girer.
 - `update-downloaded` olayında `quitAndInstall(true, true)` ile **sessiz** kurulum
   yapıp uygulamayı yeniden başlatır. Kullanıcıya soru sorulmaz.
 
-Güncelleme akışı için `package.json` içindeki `build.publish.url` alanını kendi
-statik güncelleme sunucunuzla değiştirin (generic provider). Sürüm yayınlamak için:
+Güncelleme kaynağı `package.json` içindeki `build.publish` alanıdır ve GitHub
+Releases'a (`provider: github`) işaret eder. Sürüm yayınlama GitHub Actions ile
+yapılır: **Actions → Create Release → Run workflow** ve sürüm girin (ör. `v1.0.3`).
+Workflow `.exe`, `.exe.blockmap` ve `latest.yml` dosyalarını release'e ekler;
+kurulu uygulamalar açılışta `latest.yml` okuyup sessizce güncellenir.
 
-```bash
-# package.json version'ı artırın, sonra:
-bun run publish
+> `desktop/package.json` içindeki `version` ile release tag'i aynı olmalı,
+> aksi halde installer adı ile sürüm uyuşmaz.
+
+## API anahtarları (.env)
+
+Kurulu uygulamada kabuk ortam değişkeni yoktur. `main.cjs` açılışta şu dosyayı
+okur ve sunucuya aktarır:
+
+```
+%APPDATA%\Enough V2 Panel\.env
 ```
 
-`publish` komutu `release/` altındaki dosyaları ve `latest.yml` /
-`latest-mac.yml` / `latest-linux.yml` manifestlerini yükler. İstemciler açılışta
-bu manifesti okuyup sessizce güncellenir.
+(`C:\Users\<kullanıcı>\AppData\Roaming\Enough V2 Panel\.env`)
+
+Örnek içerik:
+
+```
+PROVIDER_DEMO_KEY=demo-secret-123
+ALLOWED_HOSTS=httpbin.org
+```
+
+`{{env:VAR}}` yer tutucuları bu değerlerle doldurulur ve anahtarlar tarayıcıya
+gitmez. `ALLOWED_HOSTS` tanımlı değilse env kullanan istekler reddedilir.
 
 > Not: macOS ve Windows'ta imzalı dağıtım için sertifika gerekir; imzasız
 > build'lerde otomatik güncelleme bazı platformlarda çalışmaz. macOS için

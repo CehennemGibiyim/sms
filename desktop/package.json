@@ -1,6 +1,6 @@
 {
   "name": "enough-v2-desktop",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Enough V2 SMS panel — cross-platform desktop uygulaması (Windows / macOS / Linux)",
   "main": "main.cjs",
@@ -56,8 +56,10 @@
       "target": ["AppImage", "deb"]
     },
     "publish": {
-      "provider": "generic",
-      "url": "https://example.com/enough-updates/"
+      "provider": "github",
+      "owner": "CehennemGibiyim",
+      "repo": "sms",
+      "releaseType": "release"
     }
   }
 }

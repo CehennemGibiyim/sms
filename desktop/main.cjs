@@ -17,7 +17,38 @@ function resolvePaths() {
   }
 }
 
+/**
+ * Loads KEY=VALUE pairs from <userData>/.env so API keys and ALLOWED_HOSTS can
+ * be configured on an installed copy, where the user has no shell environment.
+ * Existing process env wins, so `HOST`, `PORT`, etc. stay under our control.
+ */
+function loadUserEnv() {
+  const envFile = path.join(app.getPath('userData'), '.env')
+  let raw
+  try {
+    raw = fs.readFileSync(envFile, 'utf8')
+  } catch {
+    return
+  }
+  for (const line of raw.split(/\r?\n/)) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+    const eq = trimmed.indexOf('=')
+    if (eq <= 0) continue
+    const key = trimmed.slice(0, eq).trim()
+    let value = trimmed.slice(eq + 1).trim()
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1)
+    }
+    if (process.env[key] === undefined) process.env[key] = value
+  }
+}
+
 function startPanelServer() {
+  loadUserEnv()
   const { serverFile, distDir, dataDir } = resolvePaths()
   if (!fs.existsSync(serverFile)) {
     throw new Error(
@@ -27,6 +58,9 @@ function startPanelServer() {
   process.env.DIST_DIR = distDir
   process.env.DATA_DIR = dataDir
   process.env.ENOUGH_NO_AUTOSTART = '1'
+  // Loopback only: avoids the Windows Firewall prompt and keeps the local
+  // proxy off the LAN.
+  process.env.HOST = '127.0.0.1'
   const mod = require(serverFile)
   const start = mod.startServer || (mod.default && mod.default.startServer)
   if (typeof start !== 'function') throw new Error('startServer export bulunamadı.')
@@ -57,6 +91,8 @@ function createWindow(port) {
 }
 
 function setupAutoUpdater() {
+  // Nothing to check against when running from source.
+  if (!app.isPackaged) return
   let autoUpdater
   try {
     autoUpdater = require('electron-updater').autoUpdater
@@ -96,7 +132,21 @@ function setupAutoUpdater() {
   })
 }
 
+const gotLock = app.requestSingleInstanceLock()
+if (!gotLock) {
+  // A second launch just focuses the window that is already open.
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+}
+
 app.whenReady().then(async () => {
+  if (!gotLock) return
   try {
     httpServer = await startPanelServer()
   } catch (e) {
