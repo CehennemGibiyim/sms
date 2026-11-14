@@ -53,7 +53,10 @@ jobs:
           name: Enough V2 Panel ${{ github.event.inputs.version }}
           draft: false
           prerelease: ${{ github.event.inputs.prerelease }}
-          files: desktop/release/*.exe
+          files: |
+            desktop/release/*.exe
+            desktop/release/*.blockmap
+            desktop/release/latest.yml
           body: |
             ## Enough V2 Panel - Windows Release
             
