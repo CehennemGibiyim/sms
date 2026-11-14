@@ -6,7 +6,9 @@ node_modules/
 web-panel/dist/
 web-panel/server-dist/
 desktop/release/
-desktop/build/
+desktop/build/*
+!desktop/build/icon.ico
+!desktop/build/icon.png
 
 # runtime data
 web-panel/data/
