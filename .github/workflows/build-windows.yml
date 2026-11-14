@@ -6,9 +6,13 @@ on:
     paths:
       - 'desktop/**'
       - 'web-panel/**'
+      - '.github/workflows/build-windows.yml'
   workflow_dispatch:
   release:
     types: [published]
+
+permissions:
+  contents: write
 
 jobs:
   build-windows:
@@ -41,15 +45,29 @@ jobs:
         working-directory: desktop
         run: bun run dist:win
 
+      - name: List release output
+        working-directory: desktop
+        run: Get-ChildItem -Recurse release | Select-Object FullName, Length
+        shell: pwsh
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: desktop/release/*.exe
+          path: |
+            desktop/release/*.exe
+            desktop/release/*.blockmap
+            desktop/release/latest.yml
+          if-no-files-found: error
           retention-days: 30
 
-      - name: Create Release (on tag)
+      - name: Attach installers to release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: desktop/release/*.exe
+          files: |
+            desktop/release/*.exe
+            desktop/release/*.blockmap
+            desktop/release/latest.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
