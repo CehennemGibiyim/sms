@@ -1,12 +1,11 @@
 name: Create Release
 
+# The release version and tag always come from desktop/package.json, so the
+# tag, the installer filename and latest.yml can never disagree. Bump
+# desktop/package.json, push, then run this workflow.
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Release version (e.g., v1.0.0)'
-        required: true
-        default: 'v1.0.0'
       prerelease:
         description: 'Is this a pre-release?'
         type: boolean
@@ -27,6 +26,18 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Read version from desktop/package.json
+        id: ver
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $pkg = Get-Content desktop/package.json -Raw | ConvertFrom-Json
+          $version = "$($pkg.version)".Trim() -replace '^[vV]', ''
+          if ([string]::IsNullOrWhiteSpace($version)) { throw 'desktop/package.json does not define a version' }
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+          Write-Host "Version: $version  Tag: v$version"
+
       - name: Build web panel
         working-directory: web-panel
         run: |
@@ -46,11 +57,29 @@ jobs:
         working-directory: desktop
         run: bun run dist:win
 
+      - name: Verify installer and latest.yml agree
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = '${{ steps.ver.outputs.version }}'
+          $expected = "Enough-V2-Panel-Setup-$version.exe"
+          $exe = "desktop/release/$expected"
+          if (-not (Test-Path $exe)) {
+            throw "Expected installer $expected was not produced. Files: $((Get-ChildItem desktop/release -Name) -join ', ')"
+          }
+          if (-not (Test-Path 'desktop/release/latest.yml')) { throw 'latest.yml was not produced' }
+          $latest = Get-Content 'desktop/release/latest.yml' -Raw
+          if ($latest -notmatch [regex]::Escape($expected)) {
+            throw "latest.yml does not reference $expected"
+          }
+          if ((Get-Item $exe).Length -lt 1MB) { throw "$expected looks truncated" }
+          Write-Host "OK: $expected and latest.yml match version $version"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.version }}
-          name: Enough V2 Panel ${{ github.event.inputs.version }}
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: Enough V2 Panel ${{ steps.ver.outputs.tag }}
           draft: false
           prerelease: ${{ github.event.inputs.prerelease }}
           files: |
@@ -58,26 +87,34 @@ jobs:
             desktop/release/*.blockmap
             desktop/release/latest.yml
           body: |
-            ## Enough V2 Panel - Windows Release
-            
+            ## Enough V2 Panel ${{ steps.ver.outputs.tag }} - Windows Release
+
             ### Windows Installer (.exe)
             Download the `.exe` file below to install Enough V2 Panel on Windows.
-            
+
             ### Features
             - Cyber Neon themed UI
             - 83 SMS service definitions
             - Proxy backend for CORS bypass
             - ServiceDefinition registry for custom providers
             - Server-side API key management ({{env:VAR}} substitution)
-            - Silent auto-update
-            
+            - Silent auto-update from GitHub Releases
+
             ### Installation
-            1. Download the `.exe` installer
+            1. Download `Enough-V2-Panel-Setup-${{ steps.ver.outputs.version }}.exe`
             2. Run the installer (NSIS)
-            3. Launch "Enough V2 Panel" from Start Menu
-            
-            ### Backend
-            The desktop app includes the proxy backend automatically.
-            Configure your `.env` file with `PROVIDER_DEMO_KEY` and `ALLOWED_HOSTS` for custom providers.
+            3. Launch "Enough V2 Panel" from the Start Menu
+
+            ### API keys
+            Put them in `%APPDATA%\Enough V2 Panel\.env`:
+
+            ```
+            PROVIDER_DEMO_KEY=your-key
+            ALLOWED_HOSTS=example.com
+            ```
+
+            ### Note
+            - `enough-V2/main.py` is untouched
+            - Web catalog: https://cehennemgibiyim.github.io/sms/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
