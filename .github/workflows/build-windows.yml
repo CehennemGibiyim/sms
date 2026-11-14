@@ -1,0 +1,55 @@
+name: Build Windows Desktop
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - 'web-panel/**'
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build web panel
+        working-directory: web-panel
+        run: |
+          bun install
+          bun run build
+          bun run build:server
+
+      - name: Build desktop dependencies
+        working-directory: desktop
+        run: bun install
+
+      - name: Prepare web assets
+        working-directory: desktop
+        run: bun run prepare:web
+
+      - name: Build Windows installer
+        working-directory: desktop
+        run: bun run dist:win
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: desktop/release/*.exe
+          retention-days: 30
+
+      - name: Create Release (on tag)
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: desktop/release/*.exe

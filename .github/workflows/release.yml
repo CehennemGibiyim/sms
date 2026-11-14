@@ -1,0 +1,77 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+      prerelease:
+        description: 'Is this a pre-release?'
+        type: boolean
+        default: false
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build web panel
+        working-directory: web-panel
+        run: |
+          bun install
+          bun run build
+          bun run build:server
+
+      - name: Build desktop dependencies
+        working-directory: desktop
+        run: bun install
+
+      - name: Prepare web assets
+        working-directory: desktop
+        run: bun run prepare:web
+
+      - name: Build Windows installer
+        working-directory: desktop
+        run: bun run dist:win
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: Enough V2 Panel ${{ github.event.inputs.version }}
+          draft: false
+          prerelease: ${{ github.event.inputs.prerelease }}
+          files: desktop/release/*.exe
+          body: |
+            ## Enough V2 Panel - Windows Release
+            
+            ### Windows Installer (.exe)
+            Download the `.exe` file below to install Enough V2 Panel on Windows.
+            
+            ### Features
+            - Cyber Neon themed UI
+            - 83 SMS service definitions
+            - Proxy backend for CORS bypass
+            - ServiceDefinition registry for custom providers
+            - Server-side API key management ({{env:VAR}} substitution)
+            - Silent auto-update
+            
+            ### Installation
+            1. Download the `.exe` installer
+            2. Run the installer (NSIS)
+            3. Launch "Enough V2 Panel" from Start Menu
+            
+            ### Backend
+            The desktop app includes the proxy backend automatically.
+            Configure your `.env` file with `PROVIDER_DEMO_KEY` and `ALLOWED_HOSTS` for custom providers.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
