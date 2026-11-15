@@ -6,6 +6,7 @@
   "main": "main.cjs",
   "scripts": {
     "prepare:web": "cd ../web-panel && bun run build && bun run build:server",
+    "verify:icon": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-icon.ps1",
     "dev": "electron .",
     "dist": "electron-builder --publish never",
     "dist:win": "electron-builder --win --publish never",

@@ -54,6 +54,45 @@ kurulu uygulamalar açılışta `latest.yml` okuyup sessizce güncellenir.
 > `desktop/package.json` içindeki `version` ile release tag'i aynı olmalı,
 > aksi halde installer adı ile sürüm uyuşmaz.
 
+## İkon doğrulama (Windows)
+
+Kurulan exe'nin gerçekten `build/icon.ico` içindeki simgeyi taşıdığını
+otomatik olarak kontrol etmek için:
+
+```powershell
+# kurulumu otomatik bulur
+bun run verify:icon
+
+# veya yolu kendiniz verin
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify-icon.ps1 `
+  -ExePath "$env:LOCALAPPDATA\Programs\Enough V2 Panel\Enough V2 Panel.exe"
+```
+
+Script, `icon.ico` içindeki 16/32/48/64/128/256 girdilerinin ham baytlarını
+kurulu exe içinde arar (Windows simgeleri PE kaynaklarına birebir gömer),
+sürüm bilgisini yazar ve başlat menüsü / masaüstü / görev çubuğu
+kısayollarının bu exe'yi hedeflediğini listeler. Çıkış kodu `0` = PASS,
+`1` = FAIL.
+
+### Görev çubuğu ve başlat menüsü simgesini elle test etme
+
+1. **Başlat menüsü:** `Enough V2 Panel` arayın. Küçük / orta / geniş kutucuk
+   boyutlarında simgenin aynı "E2" logosu olduğunu doğrulayın.
+2. **Görev çubuğu:** Uygulamayı açın, görev çubuğundaki simgeye bakın.
+   Sağ tık → **Görev çubuğuna sabitle**, ardından sabitlenmiş simgeyi kontrol edin.
+3. **Pencere simgesi:** Sol üst köşe + `Alt+Tab` geçiş görünümü.
+4. **Kısayol özellikleri:** Masaüstü/başlat menüsü kısayolu → sağ tık →
+   **Özellikler → Simge Değiştir**; açılan listede gömülü simgeler görünür.
+5. **Programlar ve Özellikler:** `appwiz.cpl` içindeki giriş simgesi aynı olmalı.
+6. **Önbellek:** Eski simge görünüyorsa `ie4uinit.exe -show` çalıştırın ya da
+   `%LOCALAPPDATA%\IconCache.db` dosyasını silip Explorer'ı yeniden başlatın.
+   Yeni ikonlu sürüme güncellediyseniz eski kurulumu kaldırıp yeniden kurmak
+   en temiz sonucu verir.
+
+> Not: Kısayollar kendi ikon kopyasını taşımaz; `.lnk` yalnızca hedef exe'yi
+> gösterir ve simge hedef exe'den okunur. Bu yüzden exe'nin ikonu doğruysa
+> kısayollar da doğru görünür.
+
 ## API anahtarları (.env)
 
 Kurulu uygulamada kabuk ortam değişkeni yoktur. `main.cjs` açılışta şu dosyayı
