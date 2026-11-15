@@ -93,6 +93,20 @@ kısayollarının bu exe'yi hedeflediğini listeler. Çıkış kodu `0` = PASS,
 > gösterir ve simge hedef exe'den okunur. Bu yüzden exe'nin ikonu doğruysa
 > kısayollar da doğru görünür.
 
+### macOS ve Linux ikonları
+
+Üç platform da aynı 512×512 `build/icon.png` master'ından üretilir:
+
+| Dosya | Platform | İçerik |
+| --- | --- | --- |
+| `build/icon.ico` | Windows | 16–128 BMP/DIB + 256 PNG |
+| `build/icon.icns` | macOS | icp4/5/6 + ic07/08/09/10 (16–1024 px, PNG) |
+| `build/icons/NxN.png` | Linux | 16, 24, 32, 48, 64, 128, 256, 512, 1024 |
+
+`package.json` içindeki `win.icon`, `mac.icon` ve `linux.icon` bu dosyaları
+gösterir; eksik olurlarsa electron-builder uyarı verip varsayılan Electron
+ikonuna düşer.
+
 ## API anahtarları (.env)
 
 Kurulu uygulamada kabuk ortam değişkeni yoktur. `main.cjs` açılışta şu dosyayı

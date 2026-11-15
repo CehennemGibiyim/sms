@@ -9,6 +9,9 @@ desktop/release/
 desktop/build/*
 !desktop/build/icon.ico
 !desktop/build/icon.png
+!desktop/build/icon.icns
+!desktop/build/icons/
+!desktop/build/icons/*.png
 
 # runtime data
 web-panel/data/

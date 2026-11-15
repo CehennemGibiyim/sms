@@ -3,6 +3,8 @@
   "version": "1.0.5",
   "private": true,
   "description": "Enough V2 SMS panel — cross-platform desktop uygulaması (Windows / macOS / Linux)",
+  "homepage": "https://github.com/CehennemGibiyim/sms",
+  "author": "CehennemGibiyim",
   "main": "main.cjs",
   "scripts": {
     "prepare:web": "cd ../web-panel && bun run build && bun run build:server",
@@ -50,10 +52,12 @@
       "deleteAppDataOnUninstall": false
     },
     "mac": {
+      "icon": "build/icon.icns",
       "category": "public.app-category.utilities",
       "target": [{ "target": "dmg", "arch": ["x64", "arm64"] }]
     },
     "linux": {
+      "icon": "build/icons",
       "category": "Utility",
       "target": ["AppImage", "deb"]
     },
